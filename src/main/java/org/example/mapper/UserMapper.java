@@ -9,5 +9,5 @@ public interface UserMapper {
 
     User findUserByUsername(@Param("username") String username);
 
-    void add(@Param("username") String username, @Param("password") String password);
+    int add(User user);
 }

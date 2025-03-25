@@ -6,30 +6,20 @@ public class CustomerException extends RuntimeException {
 
     @Getter
     private String code;
-    private String message;
 
     public CustomerException(String code,String message) {
+        super(message);
         this.code = code;
-        this.message = message;
     }
 
     public CustomerException(String message) {
+        super(message);
         this.code = "500";
-        this.message = message;
     }
 
-    public CustomerException() {}
-
-    public void setCode(String code) {
-        this.code = code;
+    public CustomerException() {
+        super();
+        this.code = "500";
     }
 
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

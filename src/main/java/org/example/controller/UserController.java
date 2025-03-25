@@ -31,6 +31,7 @@ public class UserController {
     private StringRedisTemplate stringRedisTemplate;
 
     @PostMapping("/register")
+    @LogOperation(value = "用户注册", module = "用户管理")
     public Result register(@Pattern(regexp = "^\\S{5,16}$") String username,
                            @Pattern(regexp = "^\\S{5,16}$") String password) {
         User user = userService.findUserByUsername(username);

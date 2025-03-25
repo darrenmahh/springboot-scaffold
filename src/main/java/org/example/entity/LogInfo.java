@@ -14,8 +14,8 @@ public class LogInfo {
     private String operation;     // 操作
     private String username;      // 用户名
     private String ipAddress;     // IP地址
-    private Object requestParams; // 请求参数
-    private Object responseData;  // 响应数据
+    private String requestParams; // 请求参数
+    private String responseData;  // 响应数据
     private Long startTime;       // 开始时间
     private Long endTime;         // 结束时间
     private Long executionTime;   // 执行时间(ms)
