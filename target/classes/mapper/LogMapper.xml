@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.mapper.LogMapper">
+    <insert id="insert" parameterType="org.example.entity.LogInfo">
+        INSERT INTO operation_log (
+        request_id,
+        url,
+        http_method,
+        class_name,
+        method_name,
+        module,
+        operation,
+        username,
+        ip_address,
+        request_params,
+        response_data,
+        start_time,
+        end_time,
+        execution_time,
+        exception,
+        created_time
+        ) VALUES (
+        #{requestId},
+        #{url},
+        #{httpMethod},
+        #{className},
+        #{methodName},
+        #{module},
+        #{operation},
+        #{username},
+        #{ipAddress},
+        #{requestParams},
+        #{responseData},
+        #{startTime},
+        #{endTime},
+        #{executionTime},
+        #{exception},
+        NOW()
+        )
+    </insert>
+</mapper>
