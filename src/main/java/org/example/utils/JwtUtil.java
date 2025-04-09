@@ -22,7 +22,7 @@ public class JwtUtil {
     // refresh toke的类型
     private static final String TOKEN_TYPE_REFRESH = "refresh";
 
-    // 根据用户id生成access token
+    // 根据用户id生成access token  就像景区门票
     public static String generateAccessToken(Long userID) {
         Map<String,Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USER_ID, userID);
@@ -30,7 +30,7 @@ public class JwtUtil {
         return genToken(claims, ACCESS_TOKEN_EXPIRATION);
     }
 
-    // 根据用户id生成刷新token
+    // 根据用户id生成刷新token   景区门票丢失的时候不需要再拿身份证补  拿这个凭证就可以再申请
     public static String generateRefreshToken(Long userID) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USER_ID, userID);
@@ -38,6 +38,7 @@ public class JwtUtil {
         return genToken(claims, REFRESH_TOKEN_EXPIRATION);
     }
 
+    // 制作令牌的核心方法
     public static String genToken(Map<String, Object> claims, long expiration) {
         return JWT.create()
                 .withClaim("claims",claims)
@@ -45,7 +46,7 @@ public class JwtUtil {
                 .sign(Algorithm.HMAC256(KEY));
     }
 
-    // 接收token 验证 并返回业务数据
+    // 接收token 验证 并返回业务数据   解析令牌携带信息
     public static Map<String, Object> parseToken(String token) {
         return JWT.require(Algorithm.HMAC256(KEY))
                 .build()
@@ -54,6 +55,7 @@ public class JwtUtil {
                 .asMap();
     }
 
+    // 快速判断这个令牌是否有效
     public static boolean validateToken(String token) {
         try {
             parseToken(token);
