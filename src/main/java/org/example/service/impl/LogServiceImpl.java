@@ -14,8 +14,15 @@ public class LogServiceImpl implements LogService {
     private LogMapper logMapper;
 
     @Override
-    @Async
+    @Async("logTaskExecutor")
     public void saveLog(LogInfo logInfo) {
+        filterSensitiveInfo(logInfo);
         logMapper.insert(logInfo);
-    };
+    }
+
+    private void filterSensitiveInfo(LogInfo logInfo) {
+        if (logInfo.getRequestParams() != null && logInfo.getRequestParams().contains("password")) {
+            logInfo.setResponseData("---");
+        }
+    }
 }

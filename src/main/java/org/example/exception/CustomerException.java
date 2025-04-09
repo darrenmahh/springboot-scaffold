@@ -8,6 +8,7 @@ public class CustomerException extends RuntimeException {
     private String code;
 
     public CustomerException(String code,String message) {
+        // 调用父类的方法
         super(message);
         this.code = code;
     }

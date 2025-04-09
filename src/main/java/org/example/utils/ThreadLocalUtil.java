@@ -2,13 +2,13 @@ package org.example.utils;
 
 public class ThreadLocalUtil {
 
-    private static final ThreadLocal THREAD_LOCAL = new ThreadLocal();
+    private static final ThreadLocal<Object> THREAD_LOCAL = new ThreadLocal<>();
 
     public static <T> T get() {
         return (T) THREAD_LOCAL.get();
     }
 
-    public static void set(Object value) {
+    public static <T> void set(T value) {
         THREAD_LOCAL.set(value);
     }
 
