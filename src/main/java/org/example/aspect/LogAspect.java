@@ -21,9 +21,22 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * 请求到来  →  检查有没有 @LogOperation 注解
+ *    ↓
+ * 拦截执行前：记录IP、用户、参数、模块、操作名……
+ *    ↓
+ * 执行原方法（成功 or 抛异常）
+ *    ↓
+ * 拦截执行后：记录返回值、耗时、异常信息
+ *    ↓
+ * 保存日志到数据库
+ * **/
+
 @Aspect
 @Component
 public class LogAspect {
+    // final修饰表示这个变量一旦赋值就不能改变
     private static final Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
     @Autowired
@@ -34,15 +47,20 @@ public class LogAspect {
 
     @Around("@annotation(org.example.annotation.LogOperation)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        // 每次请求生成一个唯一的ID  方便追踪
         LogInfo logInfo = new LogInfo();
         logInfo.setRequestId(UUID.randomUUID().toString());
 
         // 获取请求信息
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
         if (attributes != null) {
             HttpServletRequest request = attributes.getRequest();
+            // 获取请求路径
             logInfo.setUrl(request.getRequestURI());
+            // 请求方法
             logInfo.setHttpMethod(request.getMethod());
+            // 请求IP地址
             logInfo.setIpAddress(getIpAddress(request));
 
             // 获取当前登录用户
@@ -59,6 +77,7 @@ public class LogAspect {
 
         logInfo.setClassName(method.getDeclaringClass().getName());
         logInfo.setMethodName(method.getName());
+        // 从注解里面读取模块名以及操作名
         logInfo.setModule(logOperation.module());
         logInfo.setOperation(logOperation.value());
 
