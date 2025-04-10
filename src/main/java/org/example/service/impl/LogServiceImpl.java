@@ -14,6 +14,7 @@ public class LogServiceImpl implements LogService {
     private LogMapper logMapper;
 
     @Override
+    // 告诉系统这个service要新建一个线程池供其使用
     @Async("logTaskExecutor")
     public void saveLog(LogInfo logInfo) {
         filterSensitiveInfo(logInfo);
