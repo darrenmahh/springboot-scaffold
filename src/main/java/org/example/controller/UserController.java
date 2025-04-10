@@ -48,39 +48,11 @@ public class UserController {
     @PostMapping("/login")
     @LogOperation(value = "用户登录", module = "用户登录")
     public Result login(@RequestBody LoginForm loginForm) {
-        String username = loginForm.getUsername();
-        String password = loginForm.getPassword();
-        // System.out.println(username + password);
-        // 判断前端传递过来的数据格式是否正确
-        if (username == null || password == null ||
-                !username.matches("^\\S{5,16}$") ||
-                !password.matches("^\\S{5,16}$")) {
-            throw new CustomerException("用户名或密码格式不正确");
-        }
-
-        // 根据用户名查询数据库中是否存在此用户
-        User user = userService.findUserByUsername(username);
-
-        // 查不到用户跑抛出异常不存在
-        if (user == null) {
-            throw new CustomerException("用户不存在");
-        }
-
-        // 判断密码是否正确
-        if (Md5Util.checkPassword(password, user.getPassword())) {
-            Map<String,Object> map = new HashMap<>();
-            map.put("id", user.getId());
-            map.put("username", user.getUsername());
-            String token = JwtUtil.genToken(map, 1000 * 60 * 60 * 24 * 3);
-            // token存入redis  时间和token过期时间一致
-            stringRedisTemplate.opsForValue().set(token, token, 3, TimeUnit.DAYS);
-            LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setAccessToken(token);
-            loginResponse.setExpireTime(null);
-            loginResponse.setUsername(username);
-            return Result.success(loginResponse);
-        } else {
-            throw new CustomerException("账号或密码错误");
+        try {
+            LoginResponse response = userService.login(loginForm);
+            return Result.success(response);
+        } catch (CustomerException e) {
+            return Result.error(e.getMessage());
         }
 
     }
