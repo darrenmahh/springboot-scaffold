@@ -50,7 +50,7 @@ public class UserController {
     public Result login(@RequestBody LoginForm loginForm) {
         String username = loginForm.getUsername();
         String password = loginForm.getPassword();
-        System.out.println(username + password);
+        // System.out.println(username + password);
         // 判断前端传递过来的数据格式是否正确
         if (username == null || password == null ||
                 !username.matches("^\\S{5,16}$") ||
