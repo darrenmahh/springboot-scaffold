@@ -4,6 +4,8 @@ import com.mysql.cj.log.LogFactory;
 import org.example.common.Result;
 import org.example.dto.request.LoginForm;
 import org.example.dto.response.LoginResponse;
+import org.example.dto.response.UserInfoResponse;
+import org.example.entity.Role;
 import org.example.entity.User;
 import org.example.exception.CustomerException;
 import org.example.mapper.RoleMapper;
@@ -21,8 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -122,5 +126,27 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new CustomerException("账号或密码错误");
         }
+    }
+
+    @Override
+    public UserInfoResponse getUserInfo(Integer id) {
+        // 调用mapper层从数据库中读取用户信息
+        User user = userMapper.findUserById(id);
+        if (user == null) {
+            throw new CustomerException("404", "用户不存在");
+        }
+
+        UserInfoResponse userInfoResponse = new UserInfoResponse();
+        userInfoResponse.setId(user.getId());
+        userInfoResponse.setUsername(user.getUsername());
+        userInfoResponse.setCreatedTime(user.getCreatedTime());
+        userInfoResponse.setLastLoginTime(user.getLastLoginTime());
+
+        if (user.getRoles() != null) {
+            List<String> roleNames = user.getRoles().stream().map(Role::getName).toList();
+            userInfoResponse.setRoles(roleNames);
+        }
+
+        return userInfoResponse;
     }
 }
