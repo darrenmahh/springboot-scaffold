@@ -5,6 +5,7 @@ import org.example.annotation.LogOperation;
 import org.example.common.Result;
 import org.example.dto.request.LoginForm;
 import org.example.dto.response.LoginResponse;
+import org.example.dto.response.UserInfoResponse;
 import org.example.entity.User;
 import org.example.exception.CustomerException;
 import org.example.service.UserService;
@@ -15,9 +16,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -55,6 +54,27 @@ public class UserController {
             return Result.error(e.getMessage());
         }
 
+    }
+
+    @GetMapping("/info")
+    @LogOperation(value = "获取用户信息", module = "用户管理")
+    public Result<UserInfoResponse> getUserInfo(@RequestHeader("Authorization") String token) {
+        if (token == null) {
+            return Result.error("401","未授权，请先登录");
+        }
+
+
+        if (!JwtUtil.validateToken(token)) {
+            return Result.error("401","Token已过期或无效");
+        }
+        try {
+            Map<String,Object> claims = JwtUtil.parseToken(token);
+            UserInfoResponse userInfoResponse =  userService.getUserInfo((Integer) claims.get("id"));
+            // System.out.println("--------------" + userInfoResponse);
+            return Result.success(userInfoResponse);
+        } catch (Exception e) {
+           return Result.error("获取用户信息失败" + e.getMessage());
+        }
     }
 
 }
